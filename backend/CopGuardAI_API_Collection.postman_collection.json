@@ -1,0 +1,300 @@
+{
+  "info": {
+    "name": "CopGuardAI - AI Processing Pipeline",
+    "description": "Complete AI Processing Pipeline & Fraud Detection System API",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "AI Processing Pipeline",
+      "item": [
+        {
+          "name": "Process Event - LOW RISK",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"worker_id\": \"W-LOW-001\",\n  \"user_id\": 1,\n  \"location_lat\": 19.076,\n  \"location_lng\": 72.877,\n  \"inactivity_minutes\": 5,\n  \"has_movement_anomaly\": false,\n  \"is_in_danger_zone\": false,\n  \"rapid_location_change\": false,\n  \"after_hours\": false,\n  \"repeated_trigger\": false\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/process-event",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "process-event"]
+            },
+            "description": "Test LOW risk scenario - No claim should be created"
+          }
+        },
+        {
+          "name": "Process Event - HIGH RISK (Inactivity + Danger Zone)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"worker_id\": \"W-HIGH-001\",\n  \"user_id\": 1,\n  \"location_lat\": 19.076,\n  \"location_lng\": 72.877,\n  \"inactivity_minutes\": 35,\n  \"has_movement_anomaly\": false,\n  \"is_in_danger_zone\": true,\n  \"rapid_location_change\": false,\n  \"after_hours\": false,\n  \"repeated_trigger\": false\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/process-event",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "process-event"]
+            },
+            "description": "Test HIGH risk - Should create automatic AI claim"
+          }
+        },
+        {
+          "name": "Process Event - HIGH RISK (Combined Factors)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"worker_id\": \"W-COMBINED-001\",\n  \"user_id\": 2,\n  \"location_lat\": 20.076,\n  \"location_lng\": 73.877,\n  \"inactivity_minutes\": 35,\n  \"has_movement_anomaly\": true,\n  \"is_in_danger_zone\": true,\n  \"rapid_location_change\": true,\n  \"after_hours\": true,\n  \"repeated_trigger\": false\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/process-event",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "process-event"]
+            },
+            "description": "Test combined HIGH risk factors - Should create claim with max risk score"
+          }
+        },
+        {
+          "name": "Process Event - Duplicate Prevention Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"worker_id\": \"W-DUP-CHECK-001\",\n  \"user_id\": 3,\n  \"location_lat\": 21.076,\n  \"location_lng\": 74.877,\n  \"inactivity_minutes\": 40,\n  \"has_movement_anomaly\": false,\n  \"is_in_danger_zone\": true,\n  \"rapid_location_change\": false,\n  \"after_hours\": false,\n  \"repeated_trigger\": false\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/process-event",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "process-event"]
+            },
+            "description": "Run this twice within 5 minutes - second should be prevented as duplicate"
+          }
+        },
+        {
+          "name": "Simulate High Risk Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"worker_id\": \"TEST-WORKER-COMBINED\",\n  \"user_id\": 1,\n  \"location_lat\": 19.076,\n  \"location_lng\": 72.877,\n  \"scenario\": \"combined\"\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/test/simulate-high-risk",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "test", "simulate-high-risk"]
+            },
+            "description": "Quick test endpoint - NO authentication required. Scenarios: inactivity | danger_zone | anomaly | combined"
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI Claims Management",
+      "item": [
+        {
+          "name": "Get All AI Claims (Pending)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/ai-claims?status=PENDING",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "ai-claims"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            "description": "Retrieve all pending AI-generated claims"
+          }
+        },
+        {
+          "name": "Get All AI Claims (All Status)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/ai-claims?status=ALL",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "ai-claims"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ALL"
+                }
+              ]
+            },
+            "description": "Retrieve all AI claims regardless of status"
+          }
+        },
+        {
+          "name": "Get AI Claims for Specific Worker",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/ai-claims?worker_id=1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "ai-claims"],
+              "query": [
+                {
+                  "key": "worker_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Get AI claims for specific worker"
+          }
+        },
+        {
+          "name": "Update Claim Status - APPROVE",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SENT\",\n  \"admin_notes\": \"Worker confirmed in distress. Initiated emergency response.\"\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/ai-claims/AIC-XXXXXXXX/status",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "ai-claims", "AIC-XXXXXXXX", "status"]
+            },
+            "description": "Approve an AI claim - Replace AIC-XXXXXXXX with actual claim ID"
+          }
+        },
+        {
+          "name": "Update Claim Status - REJECT",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"REJECTED\",\n  \"admin_notes\": \"False alarm. Worker confirmed safe. GPS anomaly corrected.\"\n}"
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/ai-claims/AIC-XXXXXXXX/status",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "ai-claims", "AIC-XXXXXXXX", "status"]
+            },
+            "description": "Reject an AI claim - Replace AIC-XXXXXXXX with actual claim ID"
+          }
+        },
+        {
+          "name": "Get AI Claims Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:5000/api/ai-claims/stats",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "ai-claims", "stats"]
+            },
+            "description": "Get dashboard statistics for all AI claims"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "admin_token",
+      "value": "YOUR_ADMIN_TOKEN_HERE",
+      "type": "string"
+    }
+  ]
+}

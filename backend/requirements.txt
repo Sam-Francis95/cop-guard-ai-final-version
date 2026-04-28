@@ -1,0 +1,8 @@
+flask
+flask-cors
+python-dotenv
+requests
+pyjwt
+bcrypt
+anthropic
+razorpay

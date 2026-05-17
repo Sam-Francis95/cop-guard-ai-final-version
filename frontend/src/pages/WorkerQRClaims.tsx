@@ -16,7 +16,7 @@ export default function WorkerQRClaims() {
       const user = JSON.parse(userStr);
       setWorkerName(user.name || '');
       if (user.phone) {
-        const VITE_API_URL = "http://localhost:5001";
+        const VITE_API_URL = import.meta.env.VITE_NODE_API_URL || "http://localhost:5001";
         const workerId = user.phone;
         
         fetch(`${VITE_API_URL}/api/workers/${workerId}/qr`)
@@ -66,7 +66,7 @@ export default function WorkerQRClaims() {
       });
       const base64Data = await renderBase64(qrFile);
 
-      const VITE_API_URL = "http://localhost:5001";
+      const VITE_API_URL = import.meta.env.VITE_NODE_API_URL || "http://localhost:5001";
       const workerId = user.phone;
       const qrCodeUrl = base64Data;
 

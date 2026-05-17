@@ -59,7 +59,7 @@ export default function WorkerDashboard() {
             if (!user.phone) return;
 
             try {
-                const VITE_API_URL = "http://localhost:5001";
+                const VITE_API_URL = import.meta.env.VITE_NODE_API_URL || "http://localhost:5001";
                 const workerId = user.phone;
                 const res = await fetch(`${VITE_API_URL}/api/workers/${workerId}/qr`);
                 if (!res.ok) throw new Error("API failed");
@@ -296,7 +296,7 @@ export default function WorkerDashboard() {
             const user = JSON.parse(userStr);
 
             const response = await fetch(
-                `http://localhost:5001/api/claims`,
+                `${import.meta.env.VITE_NODE_API_URL || 'http://localhost:5001'}/api/claims`,
                 {
                     method: 'POST',
                     headers: {

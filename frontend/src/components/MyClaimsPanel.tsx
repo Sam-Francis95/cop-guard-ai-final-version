@@ -15,7 +15,7 @@ export default function MyClaimsPanel({ refreshKey = 0 }) {
       const user = JSON.parse(userStr);
       if (!user.phone) return;
 
-      const url = `http://localhost:5001/api/claims?workerId=${user.phone}`;
+      const url = `${import.meta.env.VITE_NODE_API_URL || 'http://localhost:5001'}/api/claims?workerId=${user.phone}`;
       const res = await fetch(url);
       
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

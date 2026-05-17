@@ -19,7 +19,7 @@ export default function AdminAIClaimsPanel() {
         params.append('status', activeFilter);
       }
 
-      const response = await fetch(`http://localhost:5001/api/claims?${params}`);
+      const response = await fetch(`${import.meta.env.VITE_NODE_API_URL || 'http://localhost:5001'}/api/claims?${params}`);
       if (!response.ok) throw new Error('Failed to fetch claims');
       const data = await response.json();
       setClaims(data.claims || []);
@@ -39,7 +39,7 @@ export default function AdminAIClaimsPanel() {
   const handleAdminAction = async (claimId: string, action: 'APPROVE' | 'REJECT' | 'HOLD') => {
     setActionInProgress(claimId);
     try {
-      const response = await fetch(`http://localhost:5001/api/claims/${claimId}`, {
+      const response = await fetch(`${import.meta.env.VITE_NODE_API_URL || 'http://localhost:5001'}/api/claims/${claimId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -76,7 +76,7 @@ export default function AdminAIClaimsPanel() {
     setIsPaymentModalOpen(false);
 
     try {
-      await fetch(`http://localhost:5001/api/claims/${claimId}`, {
+      await fetch(`${import.meta.env.VITE_NODE_API_URL || 'http://localhost:5001'}/api/claims/${claimId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'PAID' })
@@ -183,7 +183,7 @@ export default function AdminAIClaimsPanel() {
                 <div className="flex gap-4 mb-3 p-3 bg-gray-950/50 rounded border border-gray-800">
                   <div className="w-16 h-16 shrink-0 bg-white rounded flex items-center justify-center p-1">
                      {claim.qrCode ? (
-                        <img src={claim.qrCode.startsWith('data:') ? claim.qrCode : `http://localhost:5001${claim.qrCode}`} alt="QR" className="w-full h-full object-contain" />
+                        <img src={claim.qrCode.startsWith('data:') ? claim.qrCode : `${import.meta.env.VITE_NODE_API_URL || 'http://localhost:5001'}${claim.qrCode}`} alt="QR" className="w-full h-full object-contain" />
                      ) : (
                         <span className="text-[10px] text-red-500 font-bold text-center">NO QR</span>
                      )}

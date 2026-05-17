@@ -3,6 +3,7 @@ services:
   - type: web
     name: copguard-python-api
     env: python
+    plan: free
     buildCommand: "cd backend && pip install -r requirements.txt"
     startCommand: "cd backend && gunicorn app:app --bind 0.0.0.0:$PORT"
     envVars:
@@ -13,6 +14,7 @@ services:
   - type: web
     name: copguard-node-api
     env: node
+    plan: free
     buildCommand: "cd backend-node && npm install"
     startCommand: "cd backend-node && node server.js"
     envVars:

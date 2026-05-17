@@ -1,0 +1,37 @@
+services:
+  # 1. Python Backend
+  - type: web
+    name: copguard-python-api
+    env: python
+    buildCommand: "cd backend && pip install -r requirements.txt"
+    startCommand: "cd backend && gunicorn app:app --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+
+  # 2. Node Backend
+  - type: web
+    name: copguard-node-api
+    env: node
+    buildCommand: "cd backend-node && npm install"
+    startCommand: "cd backend-node && node server.js"
+    envVars:
+      - key: NODE_VERSION
+        value: 18.16.0
+
+  # 3. React Frontend
+  - type: web
+    name: copguard-frontend
+    env: static
+    buildCommand: "cd frontend && npm install && npm run build"
+    staticPublishPath: "./frontend/dist"
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: copguard-python-api
+          envVarKey: RENDER_EXTERNAL_URL
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

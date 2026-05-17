@@ -6,3 +6,4 @@ pyjwt
 bcrypt
 anthropic
 razorpay
+gunicorn
